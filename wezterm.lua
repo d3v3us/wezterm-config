@@ -1,4 +1,4 @@
--- WezTerm Keybindings Documentation by dragonlobster 
+-- WezTerm Keybindings Documentation by dragonlobster
 -- ===================================================
 -- Leader Key:
 -- The leader key is set to ALT + q, with a timeout of 2000 milliseconds (2 seconds).
@@ -57,7 +57,7 @@ config.font_size = 16
 
 config.window_decorations = "RESIZE"
 
--- tmux
+-- tmux-like shortcuts
 config.leader = { key = "q", mods = "ALT", timeout_milliseconds = 2000 }
 config.keys = {
     {
@@ -147,23 +147,23 @@ config.tab_bar_at_bottom = true
 config.use_fancy_tab_bar = false
 config.tab_and_split_indices_are_zero_based = true
 
--- tmux status
+-- tmux-like status
 wezterm.on("update-right-status", function(window, _)
     local SOLID_LEFT_ARROW = ""
-    local ARROW_FOREGROUND = { Foreground = { Color = "#c6a0f6" } }
+    local ARROW_FOREGROUND = { Foreground = { Color = "#c6a0f6" } } -- color:mauve
     local prefix = ""
 
     if window:leader_is_active() then
-        prefix = " " .. utf8.char(0x1f30a) -- ocean wave
+        prefix = " " .. utf8.char(0x1f30a) -- ocean wave utf8 character
         SOLID_LEFT_ARROW = utf8.char(0xe0b2)
     end
 
     if window:active_tab():tab_id() ~= 0 then
-        ARROW_FOREGROUND = { Foreground = { Color = "#1e2030" } }
+        ARROW_FOREGROUND = { Foreground = { Color = "#1e2030" } } -- color:mantle
     end -- arrow color based on if tab is first pane
 
     window:set_left_status(wezterm.format {
-        { Background = { Color = "#b7bdf8" } },
+        { Background = { Color = "#b7bdf8" } }, -- color:lavendar
         { Text = prefix },
         ARROW_FOREGROUND,
         { Text = SOLID_LEFT_ARROW }
