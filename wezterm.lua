@@ -15,7 +15,6 @@
 -- 2. Pane Splitting:
 --    - LEADER + |: Split the current pane horizontally into two panes.
 --    - LEADER + -: Split the current pane vertically into two panes.
-
 -- 3. Pane Navigation:
 --    - LEADER + h: Move to the pane on the left.
 --    - LEADER + j: Move to the pane below.
@@ -92,7 +91,7 @@ config.color_scheme = color_scheme
 -- color_scheme not sufficient in providing available colors
 -- local colors = wezterm.color.get_builtin_schemes()[color_scheme]
 
--- color scheme colors for easy acccess
+-- color scheme colors for easy access
 local scheme_colors = {
     catppuccin = {
         macchiato = {
@@ -256,33 +255,39 @@ local function tab_title(tab_info)
     return tab_info.active_pane.title
 end
 
-if tab_style == "rounded" then
-    wezterm.on(
-        "format-tab-title",
-        function(tab, tabs, panes, config, hover, max_width)
-            local title = tab.tab_index .. ": " .. tab_title(tab)
+wezterm.on(
+    "format-tab-title",
+    function(tab, tabs, panes, config, hover, max_width)
+        local title = " " .. tab.tab_index .. ": " .. tab_title(tab) .. " "
+        local left_edge_text = ""
+        local right_edge_text = ""
 
-            -- ensure that the titles fit in the available space,
-            -- and that we have room for the edges.
+        if tab_style == "rounded" then
+            title = tab.tab_index .. ": " .. tab_title(tab)
             title = wezterm.truncate_right(title, max_width - 2)
-
-            if tab.is_active then
-                return {
-                    { Background = { Color = colors.tab_bar_active_tab_bg } },
-                    { Foreground = { Color = colors.tab_bar_active_tab_fg } },
-                    { Text = wezterm.nerdfonts.ple_left_half_circle_thick },
-                    { Background = { Color = colors.tab_bar_active_tab_fg } },
-                    { Foreground = { Color = colors.tab_bar_text } },
-                    { Text = title },
-                    { Background = { Color = colors.tab_bar_active_tab_bg } },
-                    { Foreground = { Color = colors.tab_bar_active_tab_fg } },
-                    { Text = wezterm.nerdfonts.ple_right_half_circle_thick },
-                }
-            end
+            left_edge_text = wezterm.nerdfonts.ple_left_half_circle_thick
+            right_edge_text = wezterm.nerdfonts.ple_right_half_circle_thick
         end
-    )
-else
-end
+
+        -- ensure that the titles fit in the available space,
+        -- and that we have room for the edges.
+        -- title = wezterm.truncate_right(title, max_width - 2)
+
+        if tab.is_active then
+            return {
+                { Background = { Color = colors.tab_bar_active_tab_bg } },
+                { Foreground = { Color = colors.tab_bar_active_tab_fg } },
+                { Text = left_edge_text },
+                { Background = { Color = colors.tab_bar_active_tab_fg } },
+                { Foreground = { Color = colors.tab_bar_text } },
+                { Text = title },
+                { Background = { Color = colors.tab_bar_active_tab_bg } },
+                { Foreground = { Color = colors.tab_bar_active_tab_fg } },
+                { Text = right_edge_text },
+            }
+        end
+    end
+)
 
 --[[
 ============================
@@ -307,9 +312,16 @@ wezterm.on("update-status", function(window, _)
             solid_left_arrow = wezterm.nerdfonts.pl_left_hard_divider
         end
 
-        if window:active_tab():tab_id() == 0 and tab_style ~= "rounded" then
-            arrow_background = { Foreground = { Color = colors.tab_bar_active_tab_fg } }
-            solid_left_arrow = wezterm.nerdfonts.pl_right_hard_divider
+        local tabs = window:mux_window():tabs_with_info()
+
+        if tab_style ~= "rounded" then
+            for _, tab_info in ipairs(tabs) do
+                if tab_info.is_active and tab_info.index == 0 then
+                    arrow_background = { Foreground = { Color = colors.tab_bar_active_tab_fg } }
+                    solid_left_arrow = wezterm.nerdfonts.pl_right_hard_divider
+                    break
+                end
+            end
         end
     end
 
