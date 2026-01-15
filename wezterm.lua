@@ -73,8 +73,8 @@ Font
 ============================
 ]] --
 
-config.font =
-    wezterm.font_with_fallback { "Maple Mono NF", "JetBrains Mono NL" }
+-- Fixed font to JetBrains Mono, which is widely supported and commonly available
+config.font = wezterm.font_with_fallback { "JetBrains Mono", "FiraCode", "Noto Color Emoji" }
 config.font_size = 14
 
 config.window_decorations = "RESIZE"
