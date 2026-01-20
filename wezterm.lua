@@ -10,14 +10,12 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
-local fish_path = "/opt/homebrew/bin/fish"
-
 local config = {}
 -- Use config builder object if possible
 if wezterm.config_builder then config = wezterm.config_builder() end
 
 -- Settings
-config.default_prog = { fish_path, "-l" }
+-- Using system default shell (no default_prog specified)
 
 local fav_themes = { "tokyonight", "nordfox" }
 config.color_scheme = fav_themes[2]
